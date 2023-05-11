@@ -30,7 +30,7 @@ public class SearchByKeywordStory {
     public void login_valid() {
         anna.is_the_login_page();
         anna.logins("a", "a");
-        anna.should_see_main_page("Matches");
+        anna.should_see_page("matching");
 
     }
 
@@ -39,7 +39,20 @@ public class SearchByKeywordStory {
     public void login_invalid() {
         anna.is_the_login_page();
         anna.logins("dafaf", "daafr");
-        anna.should_see_login_page("Login");
+        anna.should_see_page("login");
     }
-
+    
+    @Issue("#Scenario test valid")
+    @Test
+    public void scenario_test_valid(){
+    anna.is_the_login_page();
+    anna.logins("a","a");
+    anna.should_see_page("matching");
+    anna.update_profile("Marius");
+    anna.should_see_page("profile");
+    anna.restore_profile();
+    anna.send_message();
+    anna.logout();
+    anna.should_see_page("login");
+    }
 } 

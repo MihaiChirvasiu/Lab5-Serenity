@@ -3,6 +3,7 @@ package org.example.steps.serenity;
 import org.example.pages.DictionaryPage;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.steps.ScenarioSteps;
+import org.joda.time.DateTime;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
@@ -26,10 +27,18 @@ public class EndUserSteps {
     public void starts_login() {
         dictionaryPage.login();
     }
+    
+    @Step
+    public void starts_logout(){dictionaryPage.logout();}
 
     @Step
     public void should_see_main_page(String definition) {
         assertThat(dictionaryPage.getDefinitions(), hasItem(containsString(definition)));
+    }
+    
+    @Step
+    public void should_see_page(String definition){
+        assertThat(dictionaryPage.getCurrentUrl(), containsString(definition));
     }
 
     @Step
@@ -43,8 +52,37 @@ public class EndUserSteps {
         enters_password(password);
         starts_login();
     }
+    
+    public void logout(){
+        starts_logout();
+    }
+    
     @Step
     public void should_see_login_page(String definition) {
         assertThat(dictionaryPage.getDefinitionsForInvalid(), hasItem(containsString(definition)));
+    }
+    private String backupName = "Rona";
+    @Step
+    public void update_profile(String test){
+        dictionaryPage.profile();
+        dictionaryPage.enter_profile_name(test);
+        dictionaryPage.clickUpdate(test);
+        assertThat(dictionaryPage.getPetName(),containsString(test));
+    }
+    
+    public void restore_profile(){
+        if(backupName!=null) {
+            dictionaryPage.enter_profile_name(backupName);
+            dictionaryPage.clickUpdate(backupName);
+        }
+    }
+    
+    public void send_message(){
+        long time = DateTime.now().getMillis();
+        dictionaryPage.matches();
+        should_see_page("matches");
+        dictionaryPage.redirectToChat();
+        dictionaryPage.send_message(String.valueOf(time));
+        assertThat(dictionaryPage.getMessages(String.valueOf(time)),containsString(String.valueOf(time)));
     }
 }
